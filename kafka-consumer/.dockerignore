@@ -1,0 +1,15 @@
+.git
+.ci
+.github
+.travis.yml
+scripts/
+
+.next
+dist
+node_modules
+coverage
+.env
+.env*
+**/localhost.cert
+**/localhost.key
+CHANGELOG.md

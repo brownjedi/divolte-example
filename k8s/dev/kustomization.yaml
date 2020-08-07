@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# namespace to deploy all Resources to
+namespace: example-project-dev
+
+# labels added to all Resources
+commonLabels:
+  env: dev
+
+resources:
+  - ../base
+  - namespace.yaml

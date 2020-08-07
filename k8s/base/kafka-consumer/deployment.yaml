@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-consumer-deployment
+  labels:
+    component: kafka-consumer
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: kafka-consumer
+      tier: backend
+  template:
+    metadata:
+      labels:
+        component: kafka-consumer
+        tier: backend
+    spec:
+      containers:
+        - image: kafka-consumer
+          name: kafka-consumer
+          volumeMounts:
+            - mountPath: /opt/kafka-consumer/conf
+              readOnly: true
+              name: kafka-consumer-conf-volume
+          envFrom:
+            - secretRef:
+                name: kafka-secret
+            - configMapRef:
+                name: kafka-consumer-conf
+          env:
+            - name: KAFKA_DIVOLTE_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: divolte-conf
+                  key: DIVOLTE_KAFKA_TOPIC
+          resources: {}
+      volumes:
+        - name: kafka-consumer-conf-volume
+          configMap:
+            name: divolte-conf
+            items:
+              - key: EventRecord.avsc
+                path: EventRecord.avsc

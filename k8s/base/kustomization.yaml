@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - divolte-collector/deployment.yaml
+  - divolte-collector/service.yaml
+  - divolte-collector/ingress.yaml
+  - kafka-consumer/deployment.yaml
+
+images:
+  - name: kafka-consumer
+    newTag: 0.5.0
+
+configMapGenerator:
+  - name: divolte-conf
+    files:
+      - config/divolte/EventRecord.avsc
+      - config/divolte/divolte-collector.conf
+      - config/divolte/mapping.groovy
+    envs:
+      - config/divolte/divolte.config.env
+  - name: global-conf
+    envs:
+      - config/global.config.env
+  - name: kafka-consumer-conf
+    envs:
+      - config/kafka-consumer.config.env
+
+secretGenerator:
+  - name: kafka-secret
+    envs:
+      - secrets/kafka.secret.env
+    type: Opaque
+
+vars:
+  - name: INGRESS_SUBDOMAIN
+    objref:
+      kind: ConfigMap
+      name: global-conf
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.INGRESS_SUBDOMAIN

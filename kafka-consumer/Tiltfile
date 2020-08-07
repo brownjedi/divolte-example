@@ -1,0 +1,9 @@
+# -*- mode: Python -*
+
+docker_build('kafka-consumer', '.',
+  dockerfile='./dev.Dockerfile',
+  entrypoint='npm run develop',
+  live_update=[
+    sync('.', '/usr/src/app'),
+    run('cd /usr/src/app && npm install', trigger=['./package.json', './package-lock.json']),
+])

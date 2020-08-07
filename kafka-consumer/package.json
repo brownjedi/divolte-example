@@ -1,0 +1,44 @@
+{
+  "name": "kafka-consumer",
+  "version": "0.5.0",
+  "private": true,
+  "docker_image_name": "kafka-consumer",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "shx rm -rf dist",
+    "develop": "ts-node-dev --respawn --transpile-only src",
+    "start": "cross-env NODE_ENV=production node dist",
+    "prebuild": "npm run clean",
+    "build": "cross-env NODE_ENV=production tsc -p ./tsconfig.json",
+    "test": "jest --forceExit --verbose --detectOpenHandles",
+    "test:coverage": "npm run test -- --coverage",
+    "test:watch": "npm run test -- --watch"
+  },
+  "dependencies": {
+    "avsc": "^5.4.21",
+    "class-transformer": "^0.3.1",
+    "class-validator": "^0.12.2",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "dotenv-expand": "^5.1.0",
+    "kafkajs": "^1.12.0",
+    "kafkajs-lz4": "^1.2.1",
+    "lz4": "0.6.3",
+    "nconf": "^0.10.0",
+    "pretty-error": "^2.1.1",
+    "reflect-metadata": "^0.1.13",
+    "typedi": "^0.8.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.7",
+    "@types/nconf": "^0.10.0",
+    "jest": "^26.2.1",
+    "nodemon": "^2.0.4",
+    "npm-run-all": "^4.1.5",
+    "shx": "^0.3.2",
+    "ts-jest": "^26.1.4",
+    "ts-node-dev": "^1.0.0-pre.56",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.7"
+  }
+}

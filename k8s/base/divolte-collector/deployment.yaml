@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: divolte-collector-deployment
+  labels:
+    component: divolte-collector
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: divolte-collector
+      tier: backend
+  template:
+    metadata:
+      labels:
+        component: divolte-collector
+        tier: backend
+    spec:
+      restartPolicy: Always
+      containers:
+        - image: divolte/divolte-collector
+          name: divolte-collector
+          ports:
+            - name: http
+              containerPort: 8290
+          volumeMounts:
+            - mountPath: /opt/divolte/divolte-collector/conf
+              name: divolte-conf
+            - mountPath: /opt/app/divolte-collector/conf
+              readOnly: true
+              name: divolte-app-conf
+          env:
+            - name: DIVOLTE_KAFKA_BROKER_LIST
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: KAFKA_BROKER_LIST
+            - name: DIVOLTE_KAFKA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: KAFKA_USERNAME
+            - name: DIVOLTE_KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: KAFKA_PASSWORD
+            - name: DIVOLTE_COOKIE_DOMAIN
+              value: .$(INGRESS_SUBDOMAIN)
+          envFrom:
+            - configMapRef:
+                name: divolte-conf
+          resources: {}
+      volumes:
+        - name: divolte-conf
+          configMap:
+            name: divolte-conf
+            items:
+              - key: divolte-collector.conf
+                path: divolte-collector.conf
+        - name: divolte-app-conf
+          configMap:
+            name: divolte-conf
+            items:
+              - key: EventRecord.avsc
+                path: EventRecord.avsc
+              - key: mapping.groovy
+                path: mapping.groovy
